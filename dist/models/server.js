@@ -25,10 +25,10 @@ class Server {
         this.port = process.env.PORT || "8000";
         this.middlewares();
         this.routes();
-        this.dbConnection();
+        this.conectarDB();
     }
     // CONECTAR A DATABASE, podrias ser más de una
-    dbConnection() {
+    conectarDB() {
         return __awaiter(this, void 0, void 0, function* () {
             yield (0, config_1.dbConnection)();
         });

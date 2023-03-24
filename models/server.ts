@@ -14,11 +14,11 @@ class Server {
         this.port = process.env.PORT || "8000"
         this.middlewares()
         this.routes()
-        this.dbConnection()
+        this.conectarDB()
     }
     // CONECTAR A DATABASE, podrias ser más de una
 
-    async dbConnection(){
+    async conectarDB(){
        await dbConnection()
     }
 

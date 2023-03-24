@@ -29,6 +29,30 @@ const mongoose_1 = __importDefault(require("mongoose"));
     }
 }
   */
+/*
+
+export const dbConnection = async (): Promise<void> => {
+  
+  try {
+    
+    const mongoDB_CNN = process.env.MONGODB_CNN;
+    if (!mongoDB_CNN) {
+      throw new Error('La variable de entorno MONGODB_CNN no está definida');
+    }
+
+    await mongoose.connect(mongoDB_CNN, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+      
+    console.log('Base de datos Online');
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error al iniciar la base de datos');
+  }
+};
+  */
+// realizar la conexión a otra base de datos (MongoDB Atlas)  y se realiza la conexión a la base de datos de MongoDB Atlas        
 const dbConnection = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const mongoDB_CNN = process.env.MONGODB_CNN;
