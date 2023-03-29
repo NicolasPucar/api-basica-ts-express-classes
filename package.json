@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts":{    
-    "start": "ts-node dist/app.js",
+    "start": "ts-node /app.ts",
     "dev": "nodemon dist/app.js",
     "build": "tsc",
-    "test": "jest --config=./jest.config.json --coverage"
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 
 
