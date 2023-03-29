@@ -15,22 +15,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const usuario_1 = __importDefault(require("../routes/usuario"));
 const cors_1 = __importDefault(require("cors"));
-const config_1 = require("../database/config");
+const config_1 = __importDefault(require("../database/config"));
 class Server {
     constructor() {
         this.apiPaths = {
+            auth: '/api/auth',
             usuarios: '/api/usuarios'
         };
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || "8000";
+        this.dbConnection();
         this.middlewares();
         this.routes();
-        this.conectarDB();
     }
     // CONECTAR A DATABASE, podrias ser más de una
-    conectarDB() {
+    dbConnection() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield (0, config_1.dbConnection)();
+            try {
+                yield config_1.default.authenticate();
+                console.log('Base de datos Online');
+            }
+            catch (error) {
+                console.log(error);
+                throw new Error('Error al iniciar la base de datos');
+            }
         });
     }
     middlewares() {
@@ -42,6 +50,7 @@ class Server {
         this.app.use(express_1.default.static('public'));
     }
     routes() {
+        this.app.use(this.apiPaths.auth, usuario_1.default);
         this.app.use(this.apiPaths.usuarios, usuario_1.default);
     }
     listen() {

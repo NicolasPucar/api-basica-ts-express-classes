@@ -1,21 +1,27 @@
-import { Document, Model, model, Schema } from 'mongoose';
+import { DataTypes } from "sequelize";
+import db from "../database/config";
 
-export interface IUser extends Document {
-  nombre: string;
-  email: string;
-  password: string;
-  estado: boolean;
-  google: boolean;
+const Usuario = db.define('Usuario', {
+    nombre: {
+        type: DataTypes.STRING
+    },  
+    email: { 
+        type: DataTypes.STRING
+    },
+    estado: {
+        type: DataTypes.BOOLEAN
+    },
+    password: {
+        type: DataTypes.STRING
+    }
+})
+    
+export default Usuario
+
+// sobreescribimos el toJSON para que no devuelva el password
+
+Usuario.prototype.toJSON = function() {
+    const { password, ...usuario } = this.get();
+    return usuario;
 }
 
-const userSchema: Schema = new Schema({
-  nombre: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
-  estado: { type: Boolean, default: true },
-  google: { type: Boolean, default: false },
-});
-
-const User: Model<IUser> = model<IUser>('User', userSchema);
-
-export default User;

@@ -1,4 +1,25 @@
- import mongoose from 'mongoose'
+import { Sequelize } from "sequelize";
+
+const db = new Sequelize('usuariosrecetas' , 'root', 'Aeropress23.', {
+    host: 'localhost',
+    dialect: 'mysql',
+    port: 3306
+});
+
+export default db;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* export const dbConnection = async () => {
@@ -41,7 +62,7 @@ export const dbConnection = async (): Promise<void> => {
 };
   */
 
-// realizar la conexión a otra base de datos (MongoDB Atlas)  y se realiza la conexión a la base de datos de MongoDB Atlas        
+/*       
 export const dbConnection = async (): Promise<void> => {
     
     try {
@@ -51,14 +72,11 @@ export const dbConnection = async (): Promise<void> => {
         throw new Error('La variable de entorno MONGODB_CNN no está definida');
       }
   
-      await mongoose.connect(mongoDB_CNN, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      await mongoose.createConnection(mongoDB_CNN);
         
       console.log('Base de datos Online');
     } catch (error) {
       console.log(error);
       throw new Error('Error al iniciar la base de datos');
     }
-  };
+  }; */

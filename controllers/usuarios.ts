@@ -1,52 +1,141 @@
 
 import { Request, Response } from "express"
-
 import Usuario from '../models/usuario'
+import * as bcrypt from 'bcrypt';
+import { validationResult } from "express-validator";
+
+
+//TODO: 1. Crear un PromiseAll para optimizar el código
 
 export const getUsuarios = async (req: Request, res: Response) => {
-    const usuarios = await Usuario.find();
+    const limite = parseInt(req.query.limite as string, 10) || 5;
+    const desde = parseInt(req.query.desde as string, 10) || 0;
+    const query = { where: { estado: true } };
+    const usuarios = await Usuario.findAll({
+      limit: limite,
+      offset: desde,
+      where: query.where,
+    });
+    const total = await Usuario.count(query);
     res.json({
-    usuarios
-    })
-    }
+      usuarios,
+      total
+    });
+};
 
-export const getUsuario = (req: Request, res: Response) => {
+  
+  
+
+export const getUsuario = async (req: Request, res: Response) => {
     const {id} = req.params
-
-    res.json({ 
-        msg: "getUsuario",
-        id
-    })
+    const usuario = await Usuario.findByPk(id)
+    if (usuario) {
+    res.json(usuario);
+}
+    else {
+    res.status(404).json({msg: `No existe un usuario con el id ${id}`})
+}
     }
 
-export const postUsuario =  async (req: Request, res: Response) => {
-    const body = req.body
-    const usuario = new Usuario(body)
-    await usuario.save()
-    res.json({
-        msg: "postUsuario",
-        body,
-        usuario
-    })
+export const postUsuario = async (req: Request, res: Response) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json(errors)
     }
-
-export const putUsuario = (req: Request, res: Response) => {
-    const {id} = req.params
     const {body} = req
+// encryptar la contraseñaui
+    const salt = bcrypt.genSaltSync();
+    body.password = bcrypt.hashSync(body.password, salt)
 
-    res.json({
-    msg: "putUsuario",
-    body,
-    id
+try { 
+
+        const existeEmail = await Usuario.findOne({
+        where: {
+            email: body.email
+        }
+        });
+
+        if (existeEmail) {
+        return res.status(400).json({
+            msg: `Ya existe un usuario con el email  ${body.email}`
+        })
+    } else {
+    const usuario = Usuario.build(body)
+    await usuario.save()
+    res.json(usuario)
+    } 
+
+ } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            msg: 'Hable con el administrador'
+        })
+ }
+ }
+
+export const putUsuario = async (req: Request, res: Response) => {
+    const {id} = req.params
+    const {_id, password, google, ...resto} = req.body
+    if (password) {
+        // encryptar la contraseña  
+        const salt = bcrypt.genSaltSync();
+        resto.password = bcrypt.hashSync(password, salt)
+    }
+    const body = resto
+
+try {
+
+    const usuario = await Usuario.findByPk(id)  
+
+    if (!usuario) {
+        return res.status(404).json({
+            msg: `No existe un usuario con el id ${id}`
+        })
+    }
+    await usuario.update(body)
+
+    res.json(usuario)
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            msg: 'Hable con el administrador'
         })
         }
+    }
+export const deleteUsuario = async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-export const deleteUsuario = (req: Request, res: Response) => {
-    const {id} = req.params
-    res.json({
-    msg: "deleteUsuario",
-    id
-    })
+  try {
+    const usuario = await Usuario.findByPk(id);
+
+    if (!usuario) {
+      return res.status(404).json({
+        msg: `No existe un usuario con el id ${id}`,
+      });
     }
 
+    //Físicamente lo borramos
+    //await usuario.destroy()
+
+    //Cambiamos el estado
+    await usuario.update({ estado: false });
+
+    res.json({
+      msg: "Usuario borrado",
+      id,
+      usuario,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      msg: "Hable con el administrador",
+    });
+  }
+};
+
+
+
+    
 
