@@ -6,7 +6,7 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
+/* 
 CREATE TABLE `usuarios` (
   `nombre` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -41,7 +41,7 @@ INSERT INTO `usuarios` (`nombre`, `email`, `estado`, `createdAt`, `updatedAt`, `
 ('guido14', 'guido14@guido.com', 1, '2023-03-29 11:36:48', '2023-03-29 09:36:48', 27, 0, '$2b$10$YMSJUVYGTk8OxKc1f3igx.W/rhs/kXCFsRM6QAmRGz.VTUUBdO9pm'),
 ('guido15', 'guido15@guido.com', 0, '2023-03-29 12:49:20', '2023-03-29 09:36:58', 28, 0, '$2b$10$s7eg5ikCS/gHvdgvvHQbWuDx9AvatoOvKqByZbHDMGUpFcpd6Q.ku'),
 ('pepe', 'pepe@pepe.com', 1, '2023-03-29 15:48:24', '2023-03-29 13:48:24', 29, 0, '$2b$10$ElKlMKMIFzwRFYAXi7u8/ebyvZYQiPxe1gXDxnRV5V.5Tffgphxda');
-
+ */
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
