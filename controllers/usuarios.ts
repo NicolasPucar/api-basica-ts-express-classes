@@ -43,7 +43,9 @@ export const postUsuario = async (req: Request, res: Response) => {
         return res.status(400).json(errors)
     }
     const {body} = req
-// encryptar la contraseñaui
+
+// encrypta la contraseña
+
     const salt = bcrypt.genSaltSync();
     body.password = bcrypt.hashSync(body.password, salt)
 
