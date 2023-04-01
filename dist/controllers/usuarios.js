@@ -42,12 +42,9 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUsuario = exports.putUsuario = exports.postUsuario = exports.getUsuario = exports.getUsuarios = void 0;
-const usuario_1 = __importDefault(require("../models/usuario"));
+const usuario_1 = require("../models/usuario");
 const bcrypt = __importStar(require("bcrypt"));
 const express_validator_1 = require("express-validator");
 //TODO: 1. Crear un PromiseAll para optimizar el código
@@ -55,12 +52,12 @@ const getUsuarios = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const limite = parseInt(req.query.limite, 10) || 5;
     const desde = parseInt(req.query.desde, 10) || 0;
     const query = { where: { estado: true } };
-    const usuarios = yield usuario_1.default.findAll({
+    const usuarios = yield usuario_1.Usuario.findAll({
         limit: limite,
         offset: desde,
         where: query.where,
     });
-    const total = yield usuario_1.default.count(query);
+    const total = yield usuario_1.Usuario.count(query);
     res.json({
         usuarios,
         total
@@ -69,7 +66,7 @@ const getUsuarios = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getUsuarios = getUsuarios;
 const getUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const usuario = yield usuario_1.default.findByPk(id);
+    const usuario = yield usuario_1.Usuario.findByPk(id);
     if (usuario) {
         res.json(usuario);
     }
@@ -84,11 +81,11 @@ const postUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         return res.status(400).json(errors);
     }
     const { body } = req;
-    // encryptar la contraseñaui
+    // encrypta la contraseña
     const salt = bcrypt.genSaltSync();
     body.password = bcrypt.hashSync(body.password, salt);
     try {
-        const existeEmail = yield usuario_1.default.findOne({
+        const existeEmail = yield usuario_1.Usuario.findOne({
             where: {
                 email: body.email
             }
@@ -99,7 +96,7 @@ const postUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             });
         }
         else {
-            const usuario = usuario_1.default.build(body);
+            const usuario = usuario_1.Usuario.build(body);
             yield usuario.save();
             res.json(usuario);
         }
@@ -122,7 +119,7 @@ const putUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     const body = resto;
     try {
-        const usuario = yield usuario_1.default.findByPk(id);
+        const usuario = yield usuario_1.Usuario.findByPk(id);
         if (!usuario) {
             return res.status(404).json({
                 msg: `No existe un usuario con el id ${id}`
@@ -142,7 +139,7 @@ exports.putUsuario = putUsuario;
 const deleteUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const usuario = yield usuario_1.default.findByPk(id);
+        const usuario = yield usuario_1.Usuario.findByPk(id);
         if (!usuario) {
             return res.status(404).json({
                 msg: `No existe un usuario con el id ${id}`,

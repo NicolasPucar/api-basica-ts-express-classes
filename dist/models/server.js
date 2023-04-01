@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const usuario_1 = __importDefault(require("../routes/usuario"));
 const cors_1 = __importDefault(require("cors"));
 const config_1 = __importDefault(require("../database/config"));
+const auth_1 = require("../routes/auth");
 class Server {
     constructor() {
         this.apiPaths = {
@@ -50,7 +51,7 @@ class Server {
         this.app.use(express_1.default.static('public'));
     }
     routes() {
-        this.app.use(this.apiPaths.auth, usuario_1.default);
+        this.app.use(this.apiPaths.auth, auth_1.router);
         this.app.use(this.apiPaths.usuarios, usuario_1.default);
     }
     listen() {

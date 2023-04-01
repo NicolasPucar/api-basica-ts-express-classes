@@ -2,7 +2,7 @@ import  express, {Application}  from "express";
 import userRoutes from '../routes/usuario'
 import cors from 'cors';
 import db from "../database/config";
-
+import {router} from "../routes/auth";
 class Server {
    private app: Application
    private port: string
@@ -44,7 +44,7 @@ class Server {
 
     routes () {
 
-        this.app.use ( this.apiPaths.auth, userRoutes  )
+        this.app.use ( this.apiPaths.auth, router  )
         this.app.use ( this.apiPaths.usuarios,userRoutes )
     }
 

@@ -1,27 +1,55 @@
-import { DataTypes } from "sequelize";
-import db from "../database/config";
+import { Model, Optional } from 'sequelize';
+import { DataTypes } from 'sequelize';
+import db from '../database/config';
 
-const Usuario = db.define('Usuario', {
-    nombre: {
-        type: DataTypes.STRING
-    },  
-    email: { 
-        type: DataTypes.STRING
-    },
-    estado: {
-        type: DataTypes.BOOLEAN
-    },
-    password: {
-        type: DataTypes.STRING
-    }
-})
-    
-export default Usuario
-
-// sobreescribimos el toJSON para que no devuelva el password
-
-Usuario.prototype.toJSON = function() {
-    const { password, ...usuario } = this.get();
-    return usuario;
+interface UsuarioAttributes {
+  id: number;
+  nombre: string;
+  email: string;
+  password: string;
+  estado: boolean;
 }
 
+interface UsuarioCreationAttributes extends Optional<UsuarioAttributes, 'id'> {}
+
+class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes> implements UsuarioAttributes {
+  public id!: number;
+  public nombre!: string;
+  public email!: string;
+  public password!: string;
+  public estado!: boolean;
+}
+
+Usuario.init(
+  {
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    nombre: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    estado: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
+    }
+  },
+  {
+    sequelize: db,
+    modelName: 'Usuario'
+  }
+);
+
+export{ Usuario, UsuarioAttributes };

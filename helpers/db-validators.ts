@@ -1,5 +1,5 @@
 
-import Usuario  from "../models/usuario";
+import {Usuario}  from "../models/usuario";
 
 export const emailValidator = async (email = '') => {
   const existeEmail = await Usuario.findOne({

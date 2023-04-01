@@ -1,6 +1,6 @@
 
 import { Request, Response } from "express"
-import Usuario from '../models/usuario'
+import {Usuario} from '../models/usuario'
 import * as bcrypt from 'bcrypt';
 import { validationResult } from "express-validator";
 
