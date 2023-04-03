@@ -13,6 +13,13 @@ router.post('/', [
     (0, express_validator_1.check)('password', 'El password debe tener al menos 6 caracteres').isLength({ min: 6 }),
     (0, express_validator_1.check)('email', 'El email introducido no es válido').isEmail(),
     (0, express_validator_1.check)('email').custom(db_validators_1.emailValidator),
+    (req, res, next) => {
+        if (!req.body.rol) {
+            req.body.rol = 'USER_ROLE';
+        }
+        next();
+    },
+    (0, express_validator_1.check)('rol', 'El rol introducido no es válido').isIn(['ADMIN_ROLE', 'USER_ROLE']),
     validarCampos_1.validarCampos
 ], usuarios_1.postUsuario);
 router.put('/:id', [

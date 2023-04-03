@@ -8,6 +8,7 @@ interface UsuarioAttributes {
   email: string;
   password: string;
   estado: boolean;
+  rol: string;
 }
 
 interface UsuarioCreationAttributes extends Optional<UsuarioAttributes, 'id'> {}
@@ -18,6 +19,7 @@ class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes> implem
   public email!: string;
   public password!: string;
   public estado!: boolean;
+  public rol!: string;
 }
 
 Usuario.init(
@@ -44,7 +46,12 @@ Usuario.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true
+    },
+    rol: {
+      type: DataTypes.STRING,
+      defaultValue: 'USER_ROLE'
     }
+    
   },
   {
     sequelize: db,

@@ -37,43 +37,48 @@ export const getUsuario = async (req: Request, res: Response) => {
 }
     }
 
-export const postUsuario = async (req: Request, res: Response) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return res.status(400).json(errors)
-    }
-    const {body} = req
-
-// encrypta la contraseña
-
-    const salt = bcrypt.genSaltSync();
-    body.password = bcrypt.hashSync(body.password, salt)
-
-try { 
-
+    export const postUsuario = async (req: Request, res: Response) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json(errors);
+      }
+      const { body } = req;
+    
+      // encrypta la contraseña
+      const salt = bcrypt.genSaltSync();
+      body.password = bcrypt.hashSync(body.password, salt);
+    
+      try {
         const existeEmail = await Usuario.findOne({
-        where: {
-            email: body.email
-        }
+          where: {
+            email: body.email,
+          },
         });
-
+    
         if (existeEmail) {
-        return res.status(400).json({
-            msg: `Ya existe un usuario con el email  ${body.email}`
-        })
-    } else {
-    const usuario = Usuario.build(body)
-    await usuario.save()
-    res.json(usuario)
-    } 
+          return res.status(400).json({
+            msg: `Ya existe un usuario con el email  ${body.email}`,
+          });
+        } else {
+          const { email, password, rol } = body;
+          const usuario = await Usuario.create({
+            email,
+            password,
+            rol,
+            nombre: body.nombre,
+            estado: true
+          });
+          
 
- } catch (error) {
-        console.log(error)
+          res.json(usuario);
+        }
+      } catch (error) {
+        console.log(error);
         res.status(500).json({
-            msg: 'Hable con el administrador'
-        })
- }
- }
+          msg: "Hable con el administrador",
+        });
+      }
+    };
 
 export const putUsuario = async (req: Request, res: Response) => {
     const {id} = req.params

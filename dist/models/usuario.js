@@ -33,6 +33,10 @@ Usuario.init({
         type: sequelize_2.DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true
+    },
+    rol: {
+        type: sequelize_2.DataTypes.STRING,
+        defaultValue: 'USER_ROLE'
     }
 }, {
     sequelize: config_1.default,

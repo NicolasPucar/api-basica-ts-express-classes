@@ -1,5 +1,6 @@
-import { Router } from 'express';
+import { Router,Request, Response, NextFunction } from 'express';
 import { check } from 'express-validator';
+
 import { validarCampos } from '../middlewares/validarCampos';
 import { emailValidator, idValidator } from '../helpers/db-validators';
 import {getUsuarios,
@@ -19,8 +20,17 @@ const router = Router();
         check('password', 'El password debe tener al menos 6 caracteres').isLength({min: 6}),
         check('email', 'El email introducido no es válido').isEmail(),
         check('email').custom(emailValidator),
-    validarCampos], postUsuario)
+        (req:Request, res:Response, next:NextFunction) => {
+            if (!req.body.rol) {
+                req.body.rol = 'USER_ROLE';
+            }
+            next();
+        },
+        check('rol', 'El rol introducido no es válido').isIn(['ADMIN_ROLE', 'USER_ROLE']),
+        validarCampos
+    ], postUsuario)
     
+        
     router.put('/:id',[
         check('id').custom(idValidator),
         validarCampos

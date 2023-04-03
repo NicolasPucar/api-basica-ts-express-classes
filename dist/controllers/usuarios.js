@@ -87,24 +87,30 @@ const postUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const existeEmail = yield usuario_1.Usuario.findOne({
             where: {
-                email: body.email
-            }
+                email: body.email,
+            },
         });
         if (existeEmail) {
             return res.status(400).json({
-                msg: `Ya existe un usuario con el email  ${body.email}`
+                msg: `Ya existe un usuario con el email  ${body.email}`,
             });
         }
         else {
-            const usuario = usuario_1.Usuario.build(body);
-            yield usuario.save();
+            const { email, password, rol } = body;
+            const usuario = yield usuario_1.Usuario.create({
+                email,
+                password,
+                rol,
+                nombre: body.nombre,
+                estado: true
+            });
             res.json(usuario);
         }
     }
     catch (error) {
         console.log(error);
         res.status(500).json({
-            msg: 'Hable con el administrador'
+            msg: "Hable con el administrador",
         });
     }
 });
