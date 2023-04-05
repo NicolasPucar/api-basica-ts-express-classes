@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const db = new sequelize_1.Sequelize('usuariosrecetas', 'root', 'Aeropress23.', {
-    host: 'localhost',
+    host: process.env.MYSQL_ADDON_HOST || 'localhost',
     dialect: 'mysql',
-    port: 3306
+    port: parseInt(process.env.MYSQL_ADDON_PORT || '3306')
 });
 exports.default = db;
 /* export const dbConnection = async () => {
