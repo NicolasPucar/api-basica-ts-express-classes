@@ -55,7 +55,7 @@ class Server {
         this.app.use(this.apiPaths.usuarios, usuario_1.default);
     }
     listen() {
-        this.app.listen(parseInt(this.port), () => {
+        this.app.listen(parseInt(this.port), '0.0.0.0', () => {
             console.log(`Servidor corriendo en el Puerto ${this.port}`);
         });
     }

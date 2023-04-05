@@ -49,9 +49,9 @@ class Server {
     }
 
 
-    listen() {
-        this.app.listen(parseInt(this.port), () => {
-            console.log(`Servidor corriendo en el Puerto ${this.port}`)
+    listen () {
+        this.app.listen(parseInt(this.port), '0.0.0.0', () => {
+            console.log (`Servidor corriendo en el Puerto ${this.port}`)
         });
     }
     
