@@ -49,11 +49,12 @@ class Server {
     }
 
 
-    listen (){
-        this.app.listen( this.port, () => { 
-            console.log (`Servidor corriendo en el Puerto ${this.port}`)
-         })
+    listen() {
+        this.app.listen(parseInt(this.port), () => {
+            console.log(`Servidor corriendo en el Puerto ${this.port}`)
+        });
     }
+    
 }
 
 export default Server
