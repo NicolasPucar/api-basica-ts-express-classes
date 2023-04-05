@@ -1,0 +1,8 @@
+buildCommand: npm run build
+devCommand: npm run dev
+installCommand: npm install
+watchers:
+  - name: backend
+    command: npm run dev
+    patterns:
+      - "**/*.js"
