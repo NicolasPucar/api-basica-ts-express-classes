@@ -1,12 +1,6 @@
 import { Model, Optional } from 'sequelize';
 import { DataTypes } from 'sequelize';
-import { Sequelize } from "sequelize";
-
-const db = new Sequelize('usuariosrecetas' , 'root', 'Aeropress23.', {
-    host: process.env.MYSQL_ADDON_HOST || 'localhost',
-    dialect: 'mysql',
-    port: parseInt(process.env.MYSQL_ADDON_PORT || '3306')
-});
+import db from '../database/config';
 
 interface UsuarioAttributes {
   id: number;
@@ -66,17 +60,3 @@ Usuario.init(
 );
 
 export { Usuario, UsuarioAttributes };
-
-export async function initDatabase() {
-  try {
-    await db.authenticate();
-    console.log('Conexión a la base de datos establecida.');
-
-    // Sincronizar los modelos con la base de datos
-    await db.sync();
-
-    console.log('Base de datos y tablas creadas exitosamente.');
-  } catch (error) {
-    console.error('Error al conectar a la base de datos:', error);
-  }
-}
