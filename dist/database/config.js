@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initDatabase = void 0;
 const sequelize_1 = require("sequelize");
-const db = new sequelize_1.Sequelize('usuariosrecetas', 'root', 'Aeropress23.', {
-    host: process.env.MYSQL_ADDON_HOST || 'localhost',
+const db = new sequelize_1.Sequelize('sql7611601', 'sql7611601', 'Il24s9kdnC', {
+    host: 'sql7.freemysqlhosting.net' || 'sql7.freemysqlhosting.net',
     dialect: 'mysql',
     port: parseInt(process.env.MYSQL_ADDON_PORT || '3306')
 });

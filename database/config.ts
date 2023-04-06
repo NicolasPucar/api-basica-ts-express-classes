@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 
-const db = new Sequelize('usuariosrecetas' , 'root', 'Aeropress23.', {
-  host: process.env.MYSQL_ADDON_HOST || 'localhost',
+const db = new Sequelize('sql7611601' , 'sql7611601', 'Il24s9kdnC', {
+  host: 'sql7.freemysqlhosting.net' || 'sql7.freemysqlhosting.net',
   dialect: 'mysql',
   port: parseInt(process.env.MYSQL_ADDON_PORT || '3306')
 });
