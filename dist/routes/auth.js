@@ -10,5 +10,5 @@ exports.router.post('/login', [
     (0, express_validator_1.check)('email', 'El email es obligatorio').isEmail(),
     (0, express_validator_1.check)('password', 'El password es obligatorio').not().isEmpty(),
     validarCampos_1.validarCampos, auth_1.login
-]);
+], auth_1.login);
 //# sourceMappingURL=auth.js.map

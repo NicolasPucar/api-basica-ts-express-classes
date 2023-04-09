@@ -4,6 +4,7 @@ import cors from 'cors';
 import db, { initDatabase } from "../database/config";
 import {router} from "../routes/auth";
 
+
 class Server {
   private app: Application;
   private port: string;
