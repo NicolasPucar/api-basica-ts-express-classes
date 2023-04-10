@@ -4,6 +4,7 @@ const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const validarCampos_1 = require("../middlewares/validarCampos");
 const db_validators_1 = require("../helpers/db-validators");
+const validar_JWT_1 = require("../middlewares/validar-JWT");
 const usuarios_1 = require("../controllers/usuarios");
 const router = (0, express_1.Router)();
 router.get('/', usuarios_1.getUsuarios);
@@ -26,6 +27,9 @@ router.put('/:id', [
     (0, express_validator_1.check)('id').custom(db_validators_1.idValidator),
     validarCampos_1.validarCampos
 ], usuarios_1.putUsuario);
-router.delete('/:id', usuarios_1.deleteUsuario);
+router.delete('/:id', [validar_JWT_1.validarJWT,
+    (0, express_validator_1.check)('id').custom(db_validators_1.idValidator),
+    validarCampos_1.validarCampos,
+], usuarios_1.deleteUsuario);
 exports.default = router;
 //# sourceMappingURL=usuario.js.map

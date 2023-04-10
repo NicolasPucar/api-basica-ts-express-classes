@@ -132,7 +132,7 @@ export const deleteUsuario = async (req: Request, res: Response) => {
     res.json({
       msg: "Usuario borrado",
       id,
-      usuario,
+     
     });
   } catch (error) {
     console.log(error);

@@ -3,6 +3,8 @@ import { check } from 'express-validator';
 
 import { validarCampos } from '../middlewares/validarCampos';
 import { emailValidator, idValidator } from '../helpers/db-validators';
+import { validarJWT } from '../middlewares/validar-JWT';
+
 import {getUsuarios,
         getUsuario,
         postUsuario,
@@ -35,7 +37,11 @@ const router = Router();
         check('id').custom(idValidator),
         validarCampos
     ] , putUsuario)
-    router.delete('/:id', deleteUsuario)
+    router.delete('/:id',[validarJWT,
+        check('id').custom(idValidator),
+        validarCampos,
+        
+    ], deleteUsuario)
 
 
 
