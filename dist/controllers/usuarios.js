@@ -144,20 +144,21 @@ const putUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.putUsuario = putUsuario;
 const deleteUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    const usuarioAutenticado = req.usuario;
     try {
-        const usuario = yield usuario_1.Usuario.findByPk(id);
+        const usuario = yield usuario_1.Usuario.findOne({
+            where: { id, estado: true }
+        });
         if (!usuario) {
             return res.status(404).json({
-                msg: `No existe un usuario con el id ${id}`,
+                msg: `No existe un usuario con el id ${id} o ya fue dado de baja anteriormente`,
             });
         }
-        //Físicamente lo borramos
-        //await usuario.destroy()
-        //Cambiamos el estado
         yield usuario.update({ estado: false });
         res.json({
-            msg: "Usuario borrado",
             id,
+            msg: `El usuario con id: ${id} ha sido borrado por: `,
+            usuarioAutenticado
         });
     }
     catch (error) {

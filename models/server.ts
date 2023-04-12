@@ -1,7 +1,7 @@
 import express, {Application} from "express";
 import userRoutes from '../routes/usuario';
 import cors from 'cors';
-import db, { initDatabase } from "../database/config";
+import db, {initDatabase} from "../database/config";
 import {router} from "../routes/auth";
 
 

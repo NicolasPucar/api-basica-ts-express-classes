@@ -111,29 +111,36 @@ try {
         })
         }
     }
-export const deleteUsuario = async (req: Request, res: Response) => {
-  const { id } = req.params;
 
-  try {
-    const usuario = await Usuario.findByPk(id);
-
-    if (!usuario) {
-      return res.status(404).json({
-        msg: `No existe un usuario con el id ${id}`,
-      });
+    interface CustomRequest extends Request {
+      id?: number;
+      usuario?: Usuario;
     }
-
-    //Físicamente lo borramos
-    //await usuario.destroy()
-
-    //Cambiamos el estado
+    
+    export const deleteUsuario = async (req: CustomRequest, res: Response) => {
+      const { id } = req.params;
+      const usuarioAutenticado = req.usuario  ;
+      
+      try {
+        
+        const usuario = await Usuario.findOne({
+          where: { id, estado: true }
+        });
+        
+        if (!usuario) {
+          return res.status(404).json({
+            msg: `No existe un usuario con el id ${id} o ya fue dado de baja anteriormente`,
+          });
+        }
+        
     await usuario.update({ estado: false });
-
+    
     res.json({
-      msg: "Usuario borrado",
       id,
-     
+      msg: `El usuario con id: ${id} ha sido borrado por: `,
+      usuarioAutenticado
     });
+    
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -144,5 +151,5 @@ export const deleteUsuario = async (req: Request, res: Response) => {
 
 
 
-    
+
 

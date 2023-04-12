@@ -4,12 +4,14 @@ import { check } from 'express-validator';
 import { validarCampos } from '../middlewares/validarCampos';
 import { emailValidator, idValidator } from '../helpers/db-validators';
 import { validarJWT } from '../middlewares/validar-JWT';
+import { esAdminRole } from '../middlewares/validar-Roles';
 
 import {getUsuarios,
         getUsuario,
         postUsuario,
         putUsuario,
         deleteUsuario } from '../controllers/usuarios'
+
 
 const router = Router();
 
@@ -37,14 +39,14 @@ const router = Router();
         check('id').custom(idValidator),
         validarCampos
     ] , putUsuario)
-    router.delete('/:id',[validarJWT,
+
+    
+    router.delete('/:id',[
+        validarJWT,
+        esAdminRole,
         check('id').custom(idValidator),
-        validarCampos,
-        
+        validarCampos
     ], deleteUsuario)
-
-
-
 
 
 
