@@ -11,10 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initDatabase = void 0;
 const sequelize_1 = require("sequelize");
-const db = new sequelize_1.Sequelize('sql7611601', 'sql7611601', 'Il24s9kdnC', {
-    host: 'sql7.freemysqlhosting.net' || 'sql7.freemysqlhosting.net',
+const db = new sequelize_1.Sequelize('railway', 'root', '8RhUHoMS39nq93A40iH1', {
+    host: 'containers-us-west-9.railway.app' || 'localhost:8000',
     dialect: 'mysql',
-    port: parseInt(process.env.MYSQL_ADDON_PORT || '3306')
+    port: parseInt('7366' || '3306')
 });
 function initDatabase() {
     return __awaiter(this, void 0, void 0, function* () {

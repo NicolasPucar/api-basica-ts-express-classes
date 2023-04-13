@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import {Usuario, UsuarioAttributes } from '../models/usuario';
 import * as bcrypt from 'bcrypt';
 import { generarJWT } from '../helpers/generarJWT';
-
+import { GoogleVerify } from '../helpers/google-verify';
 
 
 export const login = async (req:Request, res:Response) => {
@@ -56,3 +56,57 @@ export const login = async (req:Request, res:Response) => {
     
     }       
 }
+
+
+export const googleSignIn = async (req:Request, res:Response) => {
+
+
+    const {id_token} = req.body;
+
+    try {
+        
+        const {email, nombre} = await GoogleVerify(id_token);
+        
+        let usuario: UsuarioAttributes | null = await Usuario.findOne({where: {email}});
+        
+        if (!usuario) {
+            //si no existe, crear usuario
+            const data = {
+                nombre,
+                email,
+                password: ':P',
+                google: true,
+                estado: true,
+                rol: 'USER_ROLE'
+
+            }
+            
+            usuario = await Usuario.create(data);
+        
+
+        //si el usuario en DB
+
+            //if (!usuario.estado) {
+            //      return res.status(401).json({
+            //      msg: 'Hable con el administrador, usuario bloqueado'
+            //      })
+            //     }
+        const token = await generarJWT(usuario.id.toString());
+  
+
+        res.json({
+            msg: 'google sign in',
+            usuario,
+            token
+        })
+
+    }
+
+    } catch (error) {
+        res.status(400).json({
+            msg: 'Token de google no es válido o no se pudo verificar'
+        })
+    }       
+}
+
+

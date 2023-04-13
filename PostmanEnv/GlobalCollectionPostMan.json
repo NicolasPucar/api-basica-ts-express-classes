@@ -44,7 +44,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nombre\": \"test1\",\r\n    \"email\": \"test1@test.com\",\r\n    \"password\": \"123456\"\r\n}",
+					"raw": "{\r\n    \"nombre\": \"Guido\",\r\n    \"email\": \"Guido@guidos.com\",\r\n    \"password\": \"123456\",\r\n    \"rol\":\"ADMIN_ROLE\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -72,7 +72,7 @@
 				"header": [
 					{
 						"key": "x-token",
-						"value": "",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjgxNDAwMzI3LCJleHAiOjE2ODE0MjkxMjd9.nyDNJB94Oj6rN4tYM6t_3oGk_XX-D4nKPJ72RcNIPZU",
 						"type": "text"
 					}
 				],
@@ -86,14 +86,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{url}}/api/usuarios/",
+					"raw": "{{url}}/api/usuarios/6",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"api",
 						"usuarios",
-						""
+						"6"
 					]
 				}
 			},
@@ -132,14 +132,77 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \"password\": \"123456\",\r\n \"email\": \"test1@test.com\"\r\n   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "{{url}}/auth/login",
+					"raw": "{{url}}/api/auth/login",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
+						"api",
 						"auth",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LOGIN GOOGLE",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/api/auth/google",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"google"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET USUARIOS PAGINADO",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/usuarios?desde=5",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"usuarios"
+					],
+					"query": [
+						{
+							"key": "desde",
+							"value": "5"
+						}
 					]
 				}
 			},

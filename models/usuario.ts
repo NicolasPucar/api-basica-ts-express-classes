@@ -20,6 +20,7 @@ class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes> implem
   public password!: string;
   public estado!: boolean;
   public rol!: string;
+  
 }
 
 Usuario.init(

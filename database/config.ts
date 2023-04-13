@@ -1,9 +1,9 @@
 import { Sequelize } from "sequelize";
 
-const db = new Sequelize('sql7611601' , 'sql7611601', 'Il24s9kdnC', {
-  host: 'sql7.freemysqlhosting.net' || 'sql7.freemysqlhosting.net',
+const db = new Sequelize('railway' , 'root', '8RhUHoMS39nq93A40iH1', {
+  host: 'containers-us-west-9.railway.app' || 'localhost:8000',
   dialect: 'mysql',
-  port: parseInt(process.env.MYSQL_ADDON_PORT || '3306')
+  port: parseInt('7366' || '3306')
 });
 
 

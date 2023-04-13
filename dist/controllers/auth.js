@@ -32,10 +32,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.googleSignIn = exports.login = void 0;
 const usuario_1 = require("../models/usuario");
 const bcrypt = __importStar(require("bcrypt"));
 const generarJWT_1 = require("../helpers/generarJWT");
+const google_verify_1 = require("../helpers/google-verify");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
@@ -76,4 +77,41 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id_token } = req.body;
+    try {
+        const { email, nombre } = yield (0, google_verify_1.GoogleVerify)(id_token);
+        let usuario = yield usuario_1.Usuario.findOne({ where: { email } });
+        if (!usuario) {
+            //si no existe, crear usuario
+            const data = {
+                nombre,
+                email,
+                password: ':P',
+                google: true,
+                estado: true,
+                rol: 'USER_ROLE'
+            };
+            usuario = yield usuario_1.Usuario.create(data);
+            //si el usuario en DB
+            //if (!usuario.estado) {
+            //      return res.status(401).json({
+            //      msg: 'Hable con el administrador, usuario bloqueado'
+            //      })
+            //     }
+            const token = yield (0, generarJWT_1.generarJWT)(usuario.id.toString());
+            res.json({
+                msg: 'google sign in',
+                usuario,
+                token
+            });
+        }
+    }
+    catch (error) {
+        res.status(400).json({
+            msg: 'Token de google no es válido o no se pudo verificar'
+        });
+    }
+});
+exports.googleSignIn = googleSignIn;
 //# sourceMappingURL=auth.js.map
