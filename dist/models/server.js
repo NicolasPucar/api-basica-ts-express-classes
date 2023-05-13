@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,17 +14,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const usuario_1 = __importDefault(require("../routes/usuario"));
+const recetas_1 = __importDefault(require("../routes/recetas"));
 const cors_1 = __importDefault(require("cors"));
-const config_1 = __importStar(require("../database/config"));
+const config_1 = __importDefault(require("../database/config"));
 const auth_1 = require("../routes/auth");
+const init_1 = require("../database/init");
 class Server {
     constructor() {
         this.apiPaths = {
             auth: '/api/auth',
-            usuarios: '/api/usuarios'
+            usuarios: '/api/usuarios',
+            recetas: '/api/recetas',
         };
         this.app = (0, express_1.default)();
-        this.port = process.env.PORT || "8000";
+        this.port = process.env.PORT || '8000';
         this.dbConnection();
         this.middlewares();
         this.routes();
@@ -66,20 +46,21 @@ class Server {
         });
     }
     middlewares() {
-        //CORS
+        // CORS
         this.app.use((0, cors_1.default)());
-        //Parseo/Lectura del Body
+        // Parseo/Lectura del Body
         this.app.use(express_1.default.json());
-        //carpeta pública
+        // Carpeta pública
         this.app.use(express_1.default.static('public'));
     }
     routes() {
         this.app.use(this.apiPaths.auth, auth_1.router);
         this.app.use(this.apiPaths.usuarios, usuario_1.default);
+        this.app.use(this.apiPaths.recetas, recetas_1.default);
     }
     initDatabase() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield (0, config_1.initDatabase)();
+            yield (0, init_1.initDatabase)();
         });
     }
     listen() {

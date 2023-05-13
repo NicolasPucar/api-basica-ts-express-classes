@@ -14,19 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initDatabase = void 0;
 const config_1 = __importDefault(require("./config"));
+const recetas_1 = __importDefault(require("../models/recetas"));
+const favoritas_1 = __importDefault(require("../models/favoritas"));
+const like_1 = __importDefault(require("../models/like"));
 function initDatabase() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield config_1.default.authenticate();
             console.log('Conexión a la base de datos establecida.');
-            //Elimina la base de datos si existe
-            yield config_1.default.query('DROP DATABASE IF EXISTS usuariosrecetas');
-            // Crea la base de datos si no existe
-            yield config_1.default.query('CREATE DATABASE IF NOT EXISTS usuariosrecetas');
-            // Selecciona la base de datos
-            yield config_1.default.query('USE usuariosrecetas');
-            // Sincroniza los modelos con la base de datos
-            yield config_1.default.sync();
+            // Sincronizar los modelos con la base de datos
+            yield recetas_1.default.sync();
+            yield favoritas_1.default.sync();
+            yield like_1.default.sync();
             console.log('Base de datos y tablas creadas exitosamente.');
         }
         catch (error) {

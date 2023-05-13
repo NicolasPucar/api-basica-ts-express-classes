@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validarJWT = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const usuario_1 = require("../models/usuario");
+const usuario_1 = __importDefault(require("../models/usuario"));
 const validarJWT = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     // x-token headers
     const token = req.header('x-token');
@@ -26,7 +26,7 @@ const validarJWT = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
     try {
         const { sub } = jsonwebtoken_1.default.verify(token, process.env.SECRETORPRIVATEKEY);
-        const usuario = yield usuario_1.Usuario.findByPk(sub);
+        const usuario = yield usuario_1.default.findByPk(sub);
         if ((usuario === null || usuario === void 0 ? void 0 : usuario.estado) === false) {
             return res.status(401).json({
                 ok: false,

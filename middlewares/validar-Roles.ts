@@ -4,7 +4,7 @@
 //middlewares/validar-roles.ts
  
 import { Request, Response, NextFunction } from 'express';
-import { Usuario } from '../models/usuario';
+import  Usuario  from '../models/usuario';
 
 interface CustomRequest extends Request {
     id?: number;

@@ -31,9 +31,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.googleSignIn = exports.login = void 0;
-const usuario_1 = require("../models/usuario");
+const usuario_1 = __importDefault(require("../models/usuario"));
 const bcrypt = __importStar(require("bcrypt"));
 const generarJWT_1 = require("../helpers/generarJWT");
 const google_verify_1 = require("../helpers/google-verify");
@@ -41,14 +44,14 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
         //verificar si el email existe
-        const usuario = yield usuario_1.Usuario.findOne({ where: { email } });
+        const usuario = yield usuario_1.default.findOne({ where: { email } });
         if (!usuario) {
             return res.status(400).json({
                 msg: `El usuario con el email ${email} no existe`
             });
         }
         //verificar si el usuario esta activo
-        const usuarioActivo = yield usuario_1.Usuario.findOne({ where: { email, estado: true } });
+        const usuarioActivo = yield usuario_1.default.findOne({ where: { email, estado: true } });
         if (!usuarioActivo) {
             return res.status(400).json({
                 msg: `Usuario o password incorrectos - estado: false`
@@ -81,10 +84,11 @@ const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const { id_token } = req.body;
     try {
         const { email, nombre } = yield (0, google_verify_1.GoogleVerify)(id_token);
-        let usuario = yield usuario_1.Usuario.findOne({ where: { email } });
+        let usuario = yield usuario_1.default.findOne({ where: { email } });
         if (!usuario) {
             //si no existe, crear usuario
             const data = {
+                id: 0,
                 nombre,
                 email,
                 password: ':P',
@@ -92,7 +96,7 @@ const googleSignIn = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 estado: true,
                 rol: 'USER_ROLE'
             };
-            usuario = yield usuario_1.Usuario.create(data);
+            usuario = yield usuario_1.default.create(data);
             //si el usuario en DB
             //if (!usuario.estado) {
             //      return res.status(401).json({

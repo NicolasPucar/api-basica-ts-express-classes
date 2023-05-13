@@ -1,6 +1,6 @@
 
 import { Request, Response } from "express"
-import {Usuario} from '../models/usuario'
+import Usuario from '../models/usuario'
 import * as bcrypt from 'bcrypt';
 import { validationResult } from "express-validator";
 
@@ -62,6 +62,7 @@ export const getUsuario = async (req: Request, res: Response) => {
         } else {
           const { email, password, rol } = body;
           const usuario = await Usuario.create({
+            id: body.id,
             email,
             password,
             rol,

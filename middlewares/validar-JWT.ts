@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import {Usuario} from '../models/usuario';
+import Usuario from '../models/usuario';
 
 interface CustomRequest extends Request {
     sub?: string;

@@ -8,11 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.idValidator = exports.emailValidator = void 0;
-const usuario_1 = require("../models/usuario");
+const usuario_1 = __importDefault(require("../models/usuario"));
 const emailValidator = (email = '') => __awaiter(void 0, void 0, void 0, function* () {
-    const existeEmail = yield usuario_1.Usuario.findOne({
+    const existeEmail = yield usuario_1.default.findOne({
         where: {
             email: email
         }
@@ -23,7 +26,7 @@ const emailValidator = (email = '') => __awaiter(void 0, void 0, void 0, functio
 });
 exports.emailValidator = emailValidator;
 const idValidator = (id = '') => __awaiter(void 0, void 0, void 0, function* () {
-    const existeId = yield usuario_1.Usuario.findByPk(id);
+    const existeId = yield usuario_1.default.findByPk(id);
     if (!existeId) {
         throw new Error(`No existe un usuario con el id: ${id}`);
     }

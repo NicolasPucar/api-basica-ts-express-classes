@@ -1,8 +1,9 @@
-import { Model, Optional } from 'sequelize';
-import { DataTypes } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import db from '../database/config';
+import Favorita from './favoritas';
+import Receta from './recetas';
 
-interface UsuarioAttributes {
+export interface UsuarioAttributes {
   id: number;
   nombre: string;
   email: string;
@@ -11,16 +12,13 @@ interface UsuarioAttributes {
   rol: string;
 }
 
-interface UsuarioCreationAttributes extends Optional<UsuarioAttributes, 'id'> {}
-
-class Usuario extends Model<UsuarioAttributes, UsuarioCreationAttributes> implements UsuarioAttributes {
+export class Usuario extends Model<UsuarioAttributes> implements UsuarioAttributes {
   public id!: number;
   public nombre!: string;
   public email!: string;
   public password!: string;
   public estado!: boolean;
   public rol!: string;
-  
 }
 
 Usuario.init(
@@ -28,36 +26,36 @@ Usuario.init(
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
     },
     nombre: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     estado: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: true
+      defaultValue: true,
     },
     rol: {
       type: DataTypes.STRING,
-      defaultValue: 'USER_ROLE'
-    }
-    
+      defaultValue: 'USER_ROLE',
+    },
   },
   {
     sequelize: db,
-    modelName: 'Usuario'
+    modelName: 'Usuario',
   }
 );
 
-export { Usuario, UsuarioAttributes };
+
+export default Usuario;

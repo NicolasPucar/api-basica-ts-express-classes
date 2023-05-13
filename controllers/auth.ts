@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import {Usuario, UsuarioAttributes } from '../models/usuario';
+import Usuario  from '../models/usuario';
+import  UsuarioAttributes  from '../models/usuario';
 import * as bcrypt from 'bcrypt';
 import { generarJWT } from '../helpers/generarJWT';
 import { GoogleVerify } from '../helpers/google-verify';
@@ -72,6 +73,7 @@ export const googleSignIn = async (req:Request, res:Response) => {
         if (!usuario) {
             //si no existe, crear usuario
             const data = {
+                id : 0,
                 nombre,
                 email,
                 password: ':P',
