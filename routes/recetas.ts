@@ -1,47 +1,51 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import Receta from '../models/recetas';
+import { validateCreateReceta, validateUpdateReceta } from '../helpers/recetaValidator';
 
 const router = express.Router();
 
+// Manejo de errores
+const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(error);
+  res.status(500).json({ success: false, error: 'Error interno del servidor' });
+};
+
 // Obtener todas las recetas
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const recetas = await Receta.findAll();
-    res.status(200).json({ ok: true, recetas });
+    res.status(200).json({ success: true, data: recetas });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, msg: 'Error al obtener las recetas' });
+    next(error);
   }
 });
 
 // Obtener una receta específica
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const receta = await Receta.findByPk(id);
     if (!receta) {
-      return res.status(404).json({ ok: false, msg: 'Receta no encontrada' });
+      return res.status(404).json({ success: false, error: 'Receta no encontrada' });
     }
-    res.status(200).json({ ok: true, receta });
+    res.status(200).json({ success: true, data: receta });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, msg: 'Error al obtener la receta' });
+    next(error);
   }
 });
 
 // Crear una nueva receta
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', validateCreateReceta, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const receta = await Receta.create(req.body);
-    res.status(201).json({ ok: true, receta });
+    res.status(201).json({ success: true, data: receta });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, msg: 'Error al crear la receta' });
+    next(error);
   }
 });
 
 // Actualizar una receta existente
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', validateUpdateReceta, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const [updated] = await Receta.update(req.body, {
@@ -49,30 +53,31 @@ router.put('/:id', async (req: Request, res: Response) => {
     });
     if (updated) {
       const updatedReceta = await Receta.findByPk(id);
-      return res.status(200).json({ ok: true, receta: updatedReceta });
+      return res.status(200).json({ success: true, data: updatedReceta });
     }
     throw new Error('Receta no encontrada');
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, msg: 'Error al actualizar la receta' });
+    next(error);
   }
 });
 
 // Eliminar una receta existente
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const deleted = await Receta.destroy({
       where: { id: id }
     });
     if (deleted) {
-      return res.status(200).json({ ok: true, msg: 'Receta eliminada exitosamente' });
+      return res.status(200).json({ success: true, message: 'Receta eliminada exitosamente' });
     }
     throw new Error('Receta no encontrada');
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, msg: 'Error al eliminar la receta' });
+    next(error);
   }
 });
+
+// Agregar middleware de manejo de errores
+router.use(errorHandler);
 
 export default router;

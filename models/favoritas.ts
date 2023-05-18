@@ -1,7 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import db from '../database/config';
-import Receta from './recetas';
-import Usuario from './usuario';
+
 
 interface FavoritaAttributes {
   id: number;

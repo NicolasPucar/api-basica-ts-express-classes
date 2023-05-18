@@ -14,46 +14,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const recetas_1 = __importDefault(require("../models/recetas"));
+const recetaValidator_1 = require("../helpers/recetaValidator");
 const router = express_1.default.Router();
+// Manejo de errores
+const errorHandler = (error, req, res, next) => {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
+};
 // Obtener todas las recetas
-router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const recetas = yield recetas_1.default.findAll();
-        res.status(200).json({ ok: true, recetas });
+        res.status(200).json({ success: true, data: recetas });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ ok: false, msg: 'Error al obtener las recetas' });
+        next(error);
     }
 }));
 // Obtener una receta específica
-router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const receta = yield recetas_1.default.findByPk(id);
         if (!receta) {
-            return res.status(404).json({ ok: false, msg: 'Receta no encontrada' });
+            return res.status(404).json({ success: false, error: 'Receta no encontrada' });
         }
-        res.status(200).json({ ok: true, receta });
+        res.status(200).json({ success: true, data: receta });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ ok: false, msg: 'Error al obtener la receta' });
+        next(error);
     }
 }));
 // Crear una nueva receta
-router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/', recetaValidator_1.validateCreateReceta, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const receta = yield recetas_1.default.create(req.body);
-        res.status(201).json({ ok: true, receta });
+        res.status(201).json({ success: true, data: receta });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ ok: false, msg: 'Error al crear la receta' });
+        next(error);
     }
 }));
 // Actualizar una receta existente
-router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.put('/:id', recetaValidator_1.validateUpdateReceta, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const [updated] = yield recetas_1.default.update(req.body, {
@@ -61,31 +64,31 @@ router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
         if (updated) {
             const updatedReceta = yield recetas_1.default.findByPk(id);
-            return res.status(200).json({ ok: true, receta: updatedReceta });
+            return res.status(200).json({ success: true, data: updatedReceta });
         }
         throw new Error('Receta no encontrada');
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ ok: false, msg: 'Error al actualizar la receta' });
+        next(error);
     }
 }));
 // Eliminar una receta existente
-router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete('/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const deleted = yield recetas_1.default.destroy({
             where: { id: id }
         });
         if (deleted) {
-            return res.status(200).json({ ok: true, msg: 'Receta eliminada exitosamente' });
+            return res.status(200).json({ success: true, message: 'Receta eliminada exitosamente' });
         }
         throw new Error('Receta no encontrada');
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ ok: false, msg: 'Error al eliminar la receta' });
+        next(error);
     }
 }));
+// Agregar middleware de manejo de errores
+router.use(errorHandler);
 exports.default = router;
 //# sourceMappingURL=recetas.js.map
