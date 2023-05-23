@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const recetas_1 = __importDefault(require("../models/recetas"));
 const recetaValidator_1 = require("../helpers/recetaValidator");
+const like_1 = __importDefault(require("../models/like"));
 const router = express_1.default.Router();
 // Manejo de errores
 const errorHandler = (error, req, res, next) => {
@@ -67,6 +68,33 @@ router.put('/:id', recetaValidator_1.validateUpdateReceta, (req, res, next) => _
             return res.status(200).json({ success: true, data: updatedReceta });
         }
         throw new Error('Receta no encontrada');
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+// Dar "Me gusta" a una receta específica
+router.post('/:id/like', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const receta = yield recetas_1.default.findByPk(id);
+        if (!receta) {
+            return res.status(404).json({ success: false, error: 'Receta no encontrada' });
+        }
+        // Verificar si el usuario ya ha dado "Me gusta" a la receta
+        const userId = 123; // ID del usuario actualmente autenticado (debes obtenerlo de la autenticación)
+        const existingLike = yield like_1.default.findOne({
+            where: { usuarioId: userId, recetaId: receta.id },
+        });
+        if (existingLike) {
+            return res.status(400).json({ success: false, error: 'Ya has dado "Me gusta" a esta receta' });
+        }
+        // Crear un nuevo registro de "Me gusta"
+        const newLike = yield like_1.default.create({
+            usuarioId: userId,
+            recetaId: receta.id,
+        });
+        res.status(201).json({ success: true, message: '¡Me gusta agregado!', data: newLike });
     }
     catch (error) {
         next(error);

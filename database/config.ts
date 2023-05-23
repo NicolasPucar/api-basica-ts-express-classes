@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+ import { Sequelize } from "sequelize";
 
 const db = new Sequelize('railway', 'root', '8RhUHoMS39nq93A40iH1', {
   host: 'containers-us-west-9.railway.app' || 'localhost:8000',
@@ -7,10 +7,6 @@ const db = new Sequelize('railway', 'root', '8RhUHoMS39nq93A40iH1', {
 });
 
 export default db;
-
-
-
-
 
 
 

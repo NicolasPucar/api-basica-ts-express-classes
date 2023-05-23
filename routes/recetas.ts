@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import Receta from '../models/recetas';
 import { validateCreateReceta, validateUpdateReceta } from '../helpers/recetaValidator';
-
+import like from '../models/like';
 const router = express.Router();
 
 // Manejo de errores
@@ -44,6 +44,7 @@ router.post('/', validateCreateReceta, async (req: Request, res: Response, next:
   }
 });
 
+
 // Actualizar una receta existente
 router.put('/:id', validateUpdateReceta, async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -60,6 +61,39 @@ router.put('/:id', validateUpdateReceta, async (req: Request, res: Response, nex
     next(error);
   }
 });
+
+// Dar "Me gusta" a una receta específica
+router.post('/:id/like', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const receta = await Receta.findByPk(id);
+
+    if (!receta) {
+      return res.status(404).json({ success: false, error: 'Receta no encontrada' });
+    }
+
+    // Verificar si el usuario ya ha dado "Me gusta" a la receta
+    const userId = 123; // ID del usuario actualmente autenticado (debes obtenerlo de la autenticación)
+    const existingLike = await like.findOne({
+      where: { usuarioId: userId, recetaId: receta.id },
+    });
+
+    if (existingLike) {
+      return res.status(400).json({ success: false, error: 'Ya has dado "Me gusta" a esta receta' });
+    }
+
+    // Crear un nuevo registro de "Me gusta"
+    const newLike = await like.create({
+      usuarioId: userId,
+      recetaId: receta.id,
+    });
+
+    res.status(201).json({ success: true, message: '¡Me gusta agregado!', data: newLike });
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 // Eliminar una receta existente
 router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
