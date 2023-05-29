@@ -1,9 +1,9 @@
-// associations.ts
-
 import Usuario from './usuario';
 import Receta from './recetas';
 import Favorita from './favoritas';
 import Like from './like';
+import Categoria from './categorias';
+import RecetasCategorias from './recetasCategorias';
 
 // Usuario - Receta - Favorita- Like
 Usuario.hasMany(Receta, { foreignKey: 'usuarioId' });
@@ -18,14 +18,27 @@ Favorita.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 Favorita.belongsTo(Receta, { foreignKey: 'recetaId' });
 
 Receta.belongsToMany(Usuario, {
-    through: Like,
-    foreignKey: 'recetaId',
-    as: 'usuariosQueGustan', // Esto te permitirá acceder a los usuarios que han dado "Me gusta" a una receta con `receta.usuariosQueGustan`
-  });
-  
-  Usuario.belongsToMany(Receta, {
-    through: Like,
-    foreignKey: 'usuarioId',
-    as: 'recetasGustadas', // Esto te permitirá acceder a las recetas que un usuario ha dado "Me gusta" con `usuario.recetasGustadas`
-  });
-  
+  through: Like,
+  foreignKey: 'recetaId',
+  as: 'usuariosQueGustan',
+});
+
+Usuario.belongsToMany(Receta, {
+  through: Like,
+  foreignKey: 'usuarioId',
+  as: 'recetasGustadas',
+});
+
+Receta.belongsToMany(Categoria, {
+  through: RecetasCategorias,
+  foreignKey: 'recetaId',
+  otherKey: 'categoriaId',
+  as: 'categorias',
+});
+
+Categoria.belongsToMany(Receta, {
+  through: RecetasCategorias,
+  foreignKey: 'categoriaId',
+  otherKey: 'recetaId',
+  as: 'recetas',
+});
