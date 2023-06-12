@@ -24,6 +24,11 @@ FullReceta.init({
         autoIncrement: true,
         primaryKey: true,
     },
+    usuarioId: {
+        type: sequelize_1.DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+    },
     nombre: {
         type: sequelize_1.DataTypes.STRING(50),
         allowNull: false,
@@ -43,22 +48,22 @@ FullReceta.init({
     ingredientes: {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
-        get: function () {
+        get() {
             return JSON.parse(this.getDataValue('ingredientes'));
         },
-        set: function (val) {
+        set(val) {
             this.setDataValue('ingredientes', JSON.stringify(val));
-        }
+        },
     },
     pasos: {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
-        get: function () {
+        get() {
             return JSON.parse(this.getDataValue('pasos'));
         },
-        set: function (val) {
+        set(val) {
             this.setDataValue('pasos', JSON.stringify(val));
-        }
+        },
     },
     porciones: {
         type: sequelize_1.DataTypes.INTEGER.UNSIGNED,
@@ -82,7 +87,12 @@ function populateFullReceta() {
     return __awaiter(this, void 0, void 0, function* () {
         const recetas = yield recetas_1.default.findAll();
         for (let receta of recetas) {
-            yield FullReceta.create(yield mostrarRecetaYsusCategorias(receta.id));
+            const existingFullReceta = yield FullReceta.findByPk(receta.id);
+            if (existingFullReceta) {
+                console.log(`FullReceta with id ${receta.id} already exists. Skipping...`);
+                continue;
+            }
+            yield mostrarRecetaYsusCategorias(receta.id);
         }
     });
 }
@@ -95,32 +105,36 @@ function mostrarRecetaYsusCategorias(idReceta) {
             return new FullReceta();
         }
         const categorias = yield receta.getCategorias();
-        // Mapear cada categoria a un objeto que solo contiene "id" y "nombre"
         const categoriasSimples = categorias.map(categoria => ({
             id: categoria.id,
             tipoComida: categoria.nombre,
         }));
-        let catstring = () => {
+        const catstring = () => {
             let result = [];
             for (let i = 0; i < categoriasSimples.length; i++) {
                 result.push(categoriasSimples[i].tipoComida.toString());
             }
             return result;
         };
-        let recetaJoined = yield FullReceta.create({
-            id: receta.id,
-            nombre: receta.nombre,
-            descripcion: receta.descripcion,
-            imagen: receta.imagen,
-            tiempoPreparacion: receta.tiempoPreparacion,
-            porciones: receta.porciones,
-            ingredientes: receta.ingredientes,
-            pasos: receta.pasos,
-            tipoComida: catstring(),
-            estado: receta.estado,
-        });
-        let fullRecipe = recetaJoined;
-        return fullRecipe;
+        try {
+            const recetaJoined = yield FullReceta.create({
+                id: receta.id,
+                nombre: receta.nombre,
+                descripcion: receta.descripcion,
+                imagen: receta.imagen,
+                tiempoPreparacion: receta.tiempoPreparacion,
+                porciones: receta.porciones,
+                ingredientes: receta.ingredientes,
+                pasos: receta.pasos,
+                tipoComida: catstring(),
+                estado: receta.estado,
+            });
+            return recetaJoined;
+        }
+        catch (error) {
+            console.error('Error al crear la FullReceta:', error);
+            return new FullReceta();
+        }
     });
 }
 //# sourceMappingURL=fullRecetas.js.map

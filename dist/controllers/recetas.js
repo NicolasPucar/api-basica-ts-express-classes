@@ -27,14 +27,23 @@ const getRecetas = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                     {
                         model: categorias_1.default,
                         as: 'categorias',
-                        where: { 'nombre': tipoComida },
+                        where: { nombre: tipoComida },
+                        through: { attributes: [] }, // Omitir atributos de la tabla intermedia
                     },
                 ],
             });
         }
         else {
             // Obtener todas las recetas sin filtrar
-            recetas = yield recetas_1.default.findAll();
+            recetas = yield recetas_1.default.findAll({
+                include: [
+                    {
+                        model: categorias_1.default,
+                        as: 'categorias',
+                        through: { attributes: [] }, // Omitir atributos de la tabla intermedia
+                    },
+                ],
+            });
         }
         res.json(recetas);
     }

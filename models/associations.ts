@@ -4,7 +4,7 @@ import Favorita from './favoritas';
 import Like from './like';
 import Categoria from './categorias';
 import RecetasCategorias from './recetasCategorias';
-
+import FullReceta from './fullRecetas';
 // Usuario - Receta - Favorita- Like
 Usuario.hasMany(Receta, { foreignKey: 'usuarioId' });
 Usuario.hasMany(Favorita, { foreignKey: 'usuarioId' });
@@ -42,3 +42,6 @@ Categoria.belongsToMany(Receta, {
   otherKey: 'recetaId',
   as: 'recetas',
 });
+
+Usuario.hasMany(FullReceta, { foreignKey: 'usuarioId' });
+FullReceta.belongsTo(Usuario, { foreignKey: 'usuarioId' });
