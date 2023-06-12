@@ -4,8 +4,8 @@ import Receta from './recetas';
 import Categoria from './categorias';
 
 class RecetasCategorias extends Model {
-  public recetaId!: number;
-  public categoriaId!: number;
+  public recetaId!: string;
+  public categoriaId!: string;
 }
 
 RecetasCategorias.init(
@@ -27,7 +27,7 @@ RecetasCategorias.init(
         model: Categoria,
         key: 'id',
       },
-    },
+    }, 
   },
   {
     sequelize: db,

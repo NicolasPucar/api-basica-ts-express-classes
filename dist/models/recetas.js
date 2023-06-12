@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const config_1 = __importDefault(require("../database/config"));
+const categorias_1 = __importDefault(require("./categorias"));
+const recetasCategorias_1 = __importDefault(require("./recetasCategorias"));
 class Receta extends sequelize_1.Model {
 }
 Receta.init({
@@ -69,6 +71,13 @@ Receta.init({
 }, {
     sequelize: config_1.default,
     modelName: 'Receta',
+});
+// Asociación con el modelo Categoria
+Receta.belongsToMany(categorias_1.default, {
+    through: recetasCategorias_1.default,
+    foreignKey: 'recetaId',
+    otherKey: 'categoriaId',
+    as: 'categorias',
 });
 exports.default = Receta;
 //# sourceMappingURL=recetas.js.map

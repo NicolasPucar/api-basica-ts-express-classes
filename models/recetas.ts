@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import db from '../database/config';
-
+import Categoria from './categorias';
+import RecetasCategorias from './recetasCategorias';
 class Receta extends Model {
   public id!: number;
   public usuarioId!: number;
@@ -11,10 +12,13 @@ class Receta extends Model {
   public ingredientes!: string[];
   public pasos!: string[];
   public porciones!: number;
-  public tipoComida!: string;
+  public tipoComida!: Categoria[];
   public estado!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  
+  public getCategorias!: () => Promise<Categoria[]>;
+  public addCategorias!: (categorias: Categoria[]) => Promise<void>;
 }
 
 Receta.init(
@@ -83,5 +87,13 @@ Receta.init(
     modelName: 'Receta',
   }
 );
+
+// Asociación con el modelo Categoria
+Receta.belongsToMany(Categoria, {
+  through: RecetasCategorias,
+  foreignKey: 'recetaId',
+  otherKey: 'categoriaId',
+  as: 'categorias',
+});
 
 export default Receta;

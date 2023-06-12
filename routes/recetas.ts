@@ -2,6 +2,9 @@ import express, { Request, Response, NextFunction } from 'express';
 import Receta from '../models/recetas';
 import { validateCreateReceta, validateUpdateReceta } from '../helpers/recetaValidator';
 import like from '../models/like';
+import { Op } from 'sequelize';
+import Categoria from '../models/categorias';
+import RecetasCategorias from '../models/recetasCategorias';
 const router = express.Router();
 
 // Manejo de errores
@@ -13,22 +16,48 @@ const errorHandler = (error: Error, req: Request, res: Response, next: NextFunct
 // Obtener todas las recetas
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const recetas = await Receta.findAll();
+    const { tipoComida } = req.query;
+    let recetas;
+
+    if (tipoComida) {
+      // Filtrar las recetas por la categoría especificada
+      console.log(tipoComida, 'desde routes');
+      
+      recetas = await RecetasCategorias.findAll({
+      
+            where: {
+              categoriaId:  tipoComida ,
+            },
+      });
+    } else {
+      // Obtener todas las recetas sin filtrar
+      recetas = await Receta.findAll();
+    }
+
     res.status(200).json({ success: true, data: recetas });
   } catch (error) {
     next(error);
   }
 });
 
-// Obtener una receta específica
-router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+// Obtener recetas por categoría
+router.get('/categoria/:nombre', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
-    const receta = await Receta.findByPk(id);
-    if (!receta) {
-      return res.status(404).json({ success: false, error: 'Receta no encontrada' });
-    }
-    res.status(200).json({ success: true, data: receta });
+    const { nombre } = req.params;
+    const recetas = await Receta.findAll({
+      include: [
+        {
+          model: Categoria,
+          as: 'categorias',
+          where: {
+            nombre: {
+              [Op.like]: nombre,
+            },
+          },
+        },
+      ],
+    });
+    res.status(200).json({ success: true, data: recetas });
   } catch (error) {
     next(error);
   }

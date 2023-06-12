@@ -15,9 +15,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.marcarFavorita = exports.borrarReceta = exports.actualizarReceta = exports.crearReceta = exports.getReceta = exports.getRecetas = void 0;
 const recetas_1 = __importDefault(require("../models/recetas"));
 const favoritas_1 = __importDefault(require("../models/favoritas"));
+const categorias_1 = __importDefault(require("../models/categorias"));
 const getRecetas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const recetas = yield recetas_1.default.findAll();
+        const { tipoComida } = req.query;
+        let recetas;
+        if (tipoComida) {
+            // Filtrar las recetas por la categoría especificada
+            recetas = yield recetas_1.default.findAll({
+                include: [
+                    {
+                        model: categorias_1.default,
+                        as: 'categorias',
+                        where: { 'nombre': tipoComida },
+                    },
+                ],
+            });
+        }
+        else {
+            // Obtener todas las recetas sin filtrar
+            recetas = yield recetas_1.default.findAll();
+        }
         res.json(recetas);
     }
     catch (error) {

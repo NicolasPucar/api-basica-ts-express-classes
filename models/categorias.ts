@@ -25,3 +25,28 @@ Categoria.init(
 );
 
 export default Categoria;
+
+
+export async function initializeCategorias() {
+  const categoriasPorDefecto = [
+    'sopa',
+    'desayuno',
+    'aperitivo',
+    'principal',
+    'postre',
+    'compartir',
+    'bebidas',
+    'vegetariano',
+    'glutenFree',
+    'caliente',
+    'frío',
+    'Boliviano Tradicional', // Otras categorías que se te ocurran...
+    'Rápido y Fácil',
+    'Bajo en Calorías'
+  ];
+
+  for (const nombre of categoriasPorDefecto) {
+    // Esto creará la categoría si no existe aún
+    await Categoria.findOrCreate({ where: { nombre } });
+  }
+}

@@ -16,6 +16,9 @@ const express_1 = __importDefault(require("express"));
 const recetas_1 = __importDefault(require("../models/recetas"));
 const recetaValidator_1 = require("../helpers/recetaValidator");
 const like_1 = __importDefault(require("../models/like"));
+const sequelize_1 = require("sequelize");
+const categorias_1 = __importDefault(require("../models/categorias"));
+const recetasCategorias_1 = __importDefault(require("../models/recetasCategorias"));
 const router = express_1.default.Router();
 // Manejo de errores
 const errorHandler = (error, req, res, next) => {
@@ -25,22 +28,45 @@ const errorHandler = (error, req, res, next) => {
 // Obtener todas las recetas
 router.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const recetas = yield recetas_1.default.findAll();
+        const { tipoComida } = req.query;
+        let recetas;
+        if (tipoComida) {
+            // Filtrar las recetas por la categoría especificada
+            console.log(tipoComida, 'desde routes');
+            recetas = yield recetasCategorias_1.default.findAll({
+                where: {
+                    categoriaId: tipoComida,
+                },
+            });
+        }
+        else {
+            // Obtener todas las recetas sin filtrar
+            recetas = yield recetas_1.default.findAll();
+        }
         res.status(200).json({ success: true, data: recetas });
     }
     catch (error) {
         next(error);
     }
 }));
-// Obtener una receta específica
-router.get('/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+// Obtener recetas por categoría
+router.get('/categoria/:nombre', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        const receta = yield recetas_1.default.findByPk(id);
-        if (!receta) {
-            return res.status(404).json({ success: false, error: 'Receta no encontrada' });
-        }
-        res.status(200).json({ success: true, data: receta });
+        const { nombre } = req.params;
+        const recetas = yield recetas_1.default.findAll({
+            include: [
+                {
+                    model: categorias_1.default,
+                    as: 'categorias',
+                    where: {
+                        nombre: {
+                            [sequelize_1.Op.like]: nombre,
+                        },
+                    },
+                },
+            ],
+        });
+        res.status(200).json({ success: true, data: recetas });
     }
     catch (error) {
         next(error);

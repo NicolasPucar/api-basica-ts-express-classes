@@ -1,16 +1,35 @@
 import { Request, Response } from 'express';
 import Receta from '../models/recetas';
 import Favorita from '../models/favoritas';
-
+import Categoria from '../models/categorias';
 export const getRecetas = async (req: Request, res: Response) => {
   try {
-    const recetas = await Receta.findAll();
+    const { tipoComida } = req.query;
+    let recetas;
+
+    if (tipoComida) {
+      // Filtrar las recetas por la categoría especificada
+      recetas = await Receta.findAll({
+        include: [
+          {
+            model: Categoria,
+            as: 'categorias',
+            where: { 'nombre': tipoComida },
+          },
+        ],
+      });
+    } else {
+      // Obtener todas las recetas sin filtrar
+      recetas = await Receta.findAll();
+    }
+
     res.json(recetas);
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: 'Hubo un error al obtener las recetas' });
   }
 };
+
 
 export const getReceta = async (req: Request, res: Response) => {
   const { id } = req.params;
