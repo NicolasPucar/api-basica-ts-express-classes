@@ -30,7 +30,6 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         { recetaId: (_e = mapaRecetas.get('Chairo')) === null || _e === void 0 ? void 0 : _e.id, categoriaId: (_f = mapaCategorias.get('aperitivo')) === null || _f === void 0 ? void 0 : _f.id },
     ];
     // 4. Comprueba e inserta cada entrada una por una
-    // 4. Comprueba e inserta cada entrada una por una
     for (const entrada of entradasRecetasCategorias) {
         try {
             const relacionExistente = yield recetasCategorias_1.default.findOne({
@@ -48,7 +47,4 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
 });
-//es tipo un join de sql pero en sequelize que es un orm de nodejs
-// y lo que hace es que te devuelve un objeto con los datos de
-// la receta y sus categorias
 //# sourceMappingURL=assignations.js.map

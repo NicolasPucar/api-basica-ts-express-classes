@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import db from '../database/config';
 import Categoria from './categorias';
+import Like from './like';
 import RecetasCategorias from './recetasCategorias';
 class Receta extends Model {
   public id!: number;
@@ -89,11 +90,13 @@ Receta.init(
 );
 
 // Asociación con el modelo Categoria
-Receta.belongsToMany(Categoria, {
+/* Receta.belongsToMany(Categoria, {
   through: RecetasCategorias,
   foreignKey: 'recetaId',
   otherKey: 'categoriaId',
   as: 'categorias',
-});
+}); */
+
+Receta.hasMany(Like, { foreignKey: 'recetaId', as: 'likes' });
 
 export default Receta;

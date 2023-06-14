@@ -5,6 +5,8 @@ import like from '../models/like';
 import { Op } from 'sequelize';
 import Categoria from '../models/categorias';
 import RecetasCategorias from '../models/recetasCategorias';
+import {validarJWT,CustomRequest} from '../middlewares/validar-JWT';
+import Sequelize from 'sequelize';
 const router = express.Router();
 
 // Manejo de errores
@@ -92,7 +94,7 @@ router.put('/:id', validateUpdateReceta, async (req: Request, res: Response, nex
 });
 
 // Dar "Me gusta" a una receta específica
-router.post('/:id/like', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/:id/like', validarJWT, async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const receta = await Receta.findByPk(id);
@@ -101,8 +103,9 @@ router.post('/:id/like', async (req: Request, res: Response, next: NextFunction)
       return res.status(404).json({ success: false, error: 'Receta no encontrada' });
     }
 
-    // Verificar si el usuario ya ha dado "Me gusta" a la receta
-    const userId = 123; // ID del usuario actualmente autenticado (debes obtenerlo de la autenticación)
+    // Utiliza el id del usuario autenticado extraído del token JWT
+    const userId = req.usuario?.id;
+
     const existingLike = await like.findOne({
       where: { usuarioId: userId, recetaId: receta.id },
     });
@@ -122,6 +125,34 @@ router.post('/:id/like', async (req: Request, res: Response, next: NextFunction)
     next(error);
   }
 });
+
+// Obtener las recetas con más likes
+// Obtener todas las recetas, ordenadas por el número de likes
+router.get('/top', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const recetas = await Receta.findAll({
+      attributes: {
+        include: [
+          [Sequelize.fn('COUNT', Sequelize.col('likes.recetaId')), 'likeCount']
+        ]
+      },
+      include: [
+        {
+          model: like,
+          as: 'likes',
+          attributes: []
+        }
+      ],
+      group: ['Receta.id'],
+      order: [[Sequelize.literal('likeCount'), 'DESC']]
+    });
+
+    res.status(200).json({ success: true, data: recetas });
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 
 // Eliminar una receta existente

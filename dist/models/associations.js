@@ -22,7 +22,7 @@ favoritas_1.default.belongsTo(recetas_1.default, { foreignKey: 'recetaId' });
 recetas_1.default.belongsToMany(usuario_1.default, {
     through: like_1.default,
     foreignKey: 'recetaId',
-    as: 'usuariosQueGustan',
+    as: 'likes',
 });
 usuario_1.default.belongsToMany(recetas_1.default, {
     through: like_1.default,

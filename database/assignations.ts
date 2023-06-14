@@ -19,7 +19,6 @@ const entradasRecetasCategorias = [
 ];
 
 // 4. Comprueba e inserta cada entrada una por una
-// 4. Comprueba e inserta cada entrada una por una
 for (const entrada of entradasRecetasCategorias) {
     try {
             const relacionExistente = await RecetasCategorias.findOne({
@@ -38,8 +37,3 @@ for (const entrada of entradasRecetasCategorias) {
     }
 }
 
-
-
-//es tipo un join de sql pero en sequelize que es un orm de nodejs
-// y lo que hace es que te devuelve un objeto con los datos de
-// la receta y sus categorias

@@ -19,6 +19,8 @@ const like_1 = __importDefault(require("../models/like"));
 const sequelize_1 = require("sequelize");
 const categorias_1 = __importDefault(require("../models/categorias"));
 const recetasCategorias_1 = __importDefault(require("../models/recetasCategorias"));
+const validar_JWT_1 = require("../middlewares/validar-JWT");
+const sequelize_2 = __importDefault(require("sequelize"));
 const router = express_1.default.Router();
 // Manejo de errores
 const errorHandler = (error, req, res, next) => {
@@ -100,15 +102,16 @@ router.put('/:id', recetaValidator_1.validateUpdateReceta, (req, res, next) => _
     }
 }));
 // Dar "Me gusta" a una receta específica
-router.post('/:id/like', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/:id/like', validar_JWT_1.validarJWT, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const { id } = req.params;
         const receta = yield recetas_1.default.findByPk(id);
         if (!receta) {
             return res.status(404).json({ success: false, error: 'Receta no encontrada' });
         }
-        // Verificar si el usuario ya ha dado "Me gusta" a la receta
-        const userId = 123; // ID del usuario actualmente autenticado (debes obtenerlo de la autenticación)
+        // Utiliza el id del usuario autenticado extraído del token JWT
+        const userId = (_a = req.usuario) === null || _a === void 0 ? void 0 : _a.id;
         const existingLike = yield like_1.default.findOne({
             where: { usuarioId: userId, recetaId: receta.id },
         });
@@ -121,6 +124,32 @@ router.post('/:id/like', (req, res, next) => __awaiter(void 0, void 0, void 0, f
             recetaId: receta.id,
         });
         res.status(201).json({ success: true, message: '¡Me gusta agregado!', data: newLike });
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+// Obtener las recetas con más likes
+// Obtener todas las recetas, ordenadas por el número de likes
+router.get('/top', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const recetas = yield recetas_1.default.findAll({
+            attributes: {
+                include: [
+                    [sequelize_2.default.fn('COUNT', sequelize_2.default.col('likes.recetaId')), 'likeCount']
+                ]
+            },
+            include: [
+                {
+                    model: like_1.default,
+                    as: 'likes',
+                    attributes: []
+                }
+            ],
+            group: ['Receta.id'],
+            order: [[sequelize_2.default.literal('likeCount'), 'DESC']]
+        });
+        res.status(200).json({ success: true, data: recetas });
     }
     catch (error) {
         next(error);

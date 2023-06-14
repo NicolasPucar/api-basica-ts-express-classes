@@ -20,7 +20,7 @@ Favorita.belongsTo(Receta, { foreignKey: 'recetaId' });
 Receta.belongsToMany(Usuario, {
   through: Like,
   foreignKey: 'recetaId',
-  as: 'usuariosQueGustan',
+  as: 'likes',
 });
 
 Usuario.belongsToMany(Receta, {
