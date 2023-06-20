@@ -7,6 +7,9 @@ import Categoria from '../models/categorias';
 import RecetasCategorias from '../models/recetasCategorias';
 import {validarJWT,CustomRequest} from '../middlewares/validar-JWT';
 import Sequelize from 'sequelize';
+import Favorita from '../models/favoritas';
+import Usuario from '../models/usuario';
+
 const router = express.Router();
 
 // Manejo de errores
@@ -170,6 +173,52 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
     next(error);
   }
 });
+
+// Marcar una receta como favorita
+router.post('/:id/favorita', validarJWT, async (req: CustomRequest, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const receta = await Receta.findByPk(id);
+
+    if (!receta) {
+      return res.status(404).json({ success: false, error: 'Receta no encontrada' });
+    }
+
+    // Utiliza el id del usuario autenticado extraído del token JWT
+    const userId = req.usuario?.id;
+
+    if (userId === undefined) {
+      return res.status(400).json({ success: false, error: 'No se pudo obtener el id del usuario' });
+    }
+
+    
+
+    const existingFavorita = await Favorita.findOne({
+      where: { usuarioId: userId, recetaId: receta.id },
+    });
+
+    if (existingFavorita) {
+      return res.status(400).json({ success: false, error: 'Ya has marcado esta receta como favorita' });
+    }
+
+
+    // Crear un nuevo registro de receta favorita
+    const newFavorita = await Favorita.create({
+      
+      usuarioId: userId,
+      recetaId: receta.id,
+    });
+
+    res.status(201).json({ success: true, message: '¡Receta marcada como favorita!', data: newFavorita });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
+
+
 
 // Agregar middleware de manejo de errores
 router.use(errorHandler);

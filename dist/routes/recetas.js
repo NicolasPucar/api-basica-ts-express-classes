@@ -21,6 +21,7 @@ const categorias_1 = __importDefault(require("../models/categorias"));
 const recetasCategorias_1 = __importDefault(require("../models/recetasCategorias"));
 const validar_JWT_1 = require("../middlewares/validar-JWT");
 const sequelize_2 = __importDefault(require("sequelize"));
+const favoritas_1 = __importDefault(require("../models/favoritas"));
 const router = express_1.default.Router();
 // Manejo de errores
 const errorHandler = (error, req, res, next) => {
@@ -166,6 +167,37 @@ router.delete('/:id', (req, res, next) => __awaiter(void 0, void 0, void 0, func
             return res.status(200).json({ success: true, message: 'Receta eliminada exitosamente' });
         }
         throw new Error('Receta no encontrada');
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+// Marcar una receta como favorita
+router.post('/:id/favorita', validar_JWT_1.validarJWT, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    try {
+        const { id } = req.params;
+        const receta = yield recetas_1.default.findByPk(id);
+        if (!receta) {
+            return res.status(404).json({ success: false, error: 'Receta no encontrada' });
+        }
+        // Utiliza el id del usuario autenticado extraído del token JWT
+        const userId = (_b = req.usuario) === null || _b === void 0 ? void 0 : _b.id;
+        if (userId === undefined) {
+            return res.status(400).json({ success: false, error: 'No se pudo obtener el id del usuario' });
+        }
+        const existingFavorita = yield favoritas_1.default.findOne({
+            where: { usuarioId: userId, recetaId: receta.id },
+        });
+        if (existingFavorita) {
+            return res.status(400).json({ success: false, error: 'Ya has marcado esta receta como favorita' });
+        }
+        // Crear un nuevo registro de receta favorita
+        const newFavorita = yield favoritas_1.default.create({
+            usuarioId: userId,
+            recetaId: receta.id,
+        });
+        res.status(201).json({ success: true, message: '¡Receta marcada como favorita!', data: newFavorita });
     }
     catch (error) {
         next(error);

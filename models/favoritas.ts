@@ -1,9 +1,11 @@
 import { Model, DataTypes } from 'sequelize';
 import db from '../database/config';
+import Receta from './recetas';
+import Usuario from './usuario';
 
 
 interface FavoritaAttributes {
-  id: number;
+  id?: number;
   recetaId: number;
   usuarioId: number;
   createdAt?: Date;
@@ -39,5 +41,20 @@ Favorita.init(
     modelName: 'Favorita',
   }
 );
+
+Favorita.belongsTo(Receta, {
+  foreignKey: 'recetaId',
+  as: 'receta',
+});
+
+Favorita.belongsTo(Usuario, {
+  foreignKey: 'usuarioId',
+  as: 'usuario',
+});
+
+
+
+
+
 
 export default Favorita;
