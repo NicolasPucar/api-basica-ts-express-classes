@@ -18,7 +18,7 @@ const validarCampos_1 = require("../middlewares/validarCampos");
 const db_validators_1 = require("../helpers/db-validators");
 const validar_JWT_1 = require("../middlewares/validar-JWT");
 const validar_Roles_1 = require("../middlewares/validar-Roles");
-const usuario_1 = __importDefault(require("../models/usuario"));
+const favoritas_1 = __importDefault(require("../models/favoritas"));
 const recetas_1 = __importDefault(require("../models/recetas"));
 const usuarios_1 = require("../controllers/usuarios");
 const router = (0, express_1.Router)();
@@ -27,15 +27,12 @@ router.get('/:id', usuarios_1.getUsuario);
 router.get('/:id/recetas_favoritas', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const usuarioId = req.params.id;
     try {
-        let recetasFavoritas = yield recetas_1.default.findAll({
+        let recetasFavoritas = yield favoritas_1.default.findAll({
+            where: { usuarioId: usuarioId },
             include: [
                 {
-                    model: usuario_1.default,
-                    as: 'usuarios',
-                    where: { id: usuarioId },
-                    through: {
-                        where: { usuarioId: usuarioId },
-                    },
+                    model: recetas_1.default,
+                    as: 'receta'
                 },
             ],
         });
