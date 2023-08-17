@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import db from '../database/config';
-
+import Receta from './recetas';
+import RecetasCategorias from './recetasCategorias';
 class Categoria extends Model {
   public id!: number;
   public nombre!: string;
@@ -49,4 +50,7 @@ export async function initializeCategorias() {
     // Esto creará la categoría si no existe aún
     await Categoria.findOrCreate({ where: { nombre } });
   }
+
+  Categoria.belongsToMany(Receta, { through: RecetasCategorias });
+
 }

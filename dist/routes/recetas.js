@@ -192,6 +192,31 @@ router.post('/:id/favorita', validar_JWT_1.validarJWT, (req, res, next) => __awa
         if (existingFavorita) {
             return res.status(400).json({ success: false, error: 'Ya has marcado esta receta como favorita' });
         }
+        // Eliminar "Me gusta" de una receta específica
+        router.delete('/:id/unlike', validar_JWT_1.validarJWT, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+            var _c;
+            try {
+                const { id } = req.params;
+                const receta = yield recetas_1.default.findByPk(id);
+                if (!receta) {
+                    return res.status(404).json({ success: false, error: 'Receta no encontrada' });
+                }
+                // Utiliza el id del usuario autenticado extraído del token JWT
+                const userId = (_c = req.usuario) === null || _c === void 0 ? void 0 : _c.id;
+                const likeRecord = yield like_1.default.findOne({
+                    where: { usuarioId: userId, recetaId: receta.id },
+                });
+                if (!likeRecord) {
+                    return res.status(400).json({ success: false, error: 'No has dado "Me gusta" a esta receta' });
+                }
+                // Eliminar el registro de "Me gusta"
+                yield likeRecord.destroy();
+                res.status(200).json({ success: true, message: '¡Me gusta eliminado!' });
+            }
+            catch (error) {
+                next(error);
+            }
+        }));
         // Crear un nuevo registro de receta favorita
         const newFavorita = yield favoritas_1.default.create({
             usuarioId: userId,

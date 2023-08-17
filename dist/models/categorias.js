@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeCategorias = void 0;
 const sequelize_1 = require("sequelize");
 const config_1 = __importDefault(require("../database/config"));
+const recetas_1 = __importDefault(require("./recetas"));
+const recetasCategorias_1 = __importDefault(require("./recetasCategorias"));
 class Categoria extends sequelize_1.Model {
 }
 Categoria.init({
@@ -54,6 +56,7 @@ function initializeCategorias() {
             // Esto creará la categoría si no existe aún
             yield Categoria.findOrCreate({ where: { nombre } });
         }
+        Categoria.belongsToMany(recetas_1.default, { through: recetasCategorias_1.default });
     });
 }
 exports.initializeCategorias = initializeCategorias;

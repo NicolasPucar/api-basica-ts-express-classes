@@ -89,14 +89,7 @@ Receta.init(
   }
 );
 
-// Asociación con el modelo Categoria
-/* Receta.belongsToMany(Categoria, {
-  through: RecetasCategorias,
-  foreignKey: 'recetaId',
-  otherKey: 'categoriaId',
-  as: 'categorias',
-}); */
 
-Receta.hasMany(Like, { foreignKey: 'recetaId', as: 'likes' });
+Receta.belongsToMany(Categoria, { through: RecetasCategorias });
 
 export default Receta;

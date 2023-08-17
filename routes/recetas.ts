@@ -202,6 +202,38 @@ router.post('/:id/favorita', validarJWT, async (req: CustomRequest, res: Respons
     }
 
 
+
+
+    // Eliminar "Me gusta" de una receta específica
+router.delete('/:id/unlike', validarJWT, async (req: CustomRequest, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    const receta = await Receta.findByPk(id);
+
+    if (!receta) {
+      return res.status(404).json({ success: false, error: 'Receta no encontrada' });
+    }
+
+    // Utiliza el id del usuario autenticado extraído del token JWT
+    const userId = req.usuario?.id;
+
+    const likeRecord = await like.findOne({
+      where: { usuarioId: userId, recetaId: receta.id },
+    });
+
+    if (!likeRecord) {
+      return res.status(400).json({ success: false, error: 'No has dado "Me gusta" a esta receta' });
+    }
+
+    // Eliminar el registro de "Me gusta"
+    await likeRecord.destroy();
+
+    res.status(200).json({ success: true, message: '¡Me gusta eliminado!' });
+  } catch (error) {
+    next(error);
+  }
+});
+
     // Crear un nuevo registro de receta favorita
     const newFavorita = await Favorita.create({
       
